@@ -51,6 +51,38 @@ http://localhost:3000
 
 3. The application will load with 20 pre-populated products ready to manage!
 
+## Testing
+
+This project includes a comprehensive test suite for all API endpoints.
+
+### Running Tests
+
+Run all tests:
+```bash
+npm test
+```
+
+### Test Coverage
+
+The test suite covers:
+- **GET /api/products** - Retrieve all products
+- **GET /api/products/:id** - Retrieve a single product
+- **POST /api/products** - Create a new product
+- **PUT /api/products/:id** - Update an existing product
+- **DELETE /api/products/:id** - Delete a product
+
+Tests include:
+- ✅ Successful operations
+- ✅ Error handling (404, 400 responses)
+- ✅ Input validation
+- ✅ Database integrity
+
+### Test Technologies
+
+- **Mocha** - Test framework
+- **Chai** - Assertion library
+- **Supertest** - HTTP assertion library
+
 ## Database Schema
 
 The application uses SQLite with the following schema:
