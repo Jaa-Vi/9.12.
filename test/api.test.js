@@ -43,99 +43,13 @@ describe('Inventory Management API', () => {
           return;
         }
 
-        // Create Express app with the same routes
+        // Create Express app and setup routes
         app = express();
         app.use(bodyParser.json());
-
-        // API Routes
-        app.get('/api/products', (req, res) => {
-          db.all('SELECT * FROM products ORDER BY id', [], (err, rows) => {
-            if (err) {
-              res.status(500).json({ error: err.message });
-              return;
-            }
-            res.json({ products: rows });
-          });
-        });
-
-        app.get('/api/products/:id', (req, res) => {
-          const id = req.params.id;
-          db.get('SELECT * FROM products WHERE id = ?', [id], (err, row) => {
-            if (err) {
-              res.status(500).json({ error: err.message });
-              return;
-            }
-            if (!row) {
-              res.status(404).json({ error: 'Product not found' });
-              return;
-            }
-            res.json({ product: row });
-          });
-        });
-
-        app.post('/api/products', (req, res) => {
-          const { name, category, price, quantity, description } = req.body;
-          
-          if (!name || !category || price === undefined || quantity === undefined) {
-            res.status(400).json({ error: 'Missing required fields' });
-            return;
-          }
-
-          const sql = 'INSERT INTO products (name, category, price, quantity, description) VALUES (?, ?, ?, ?, ?)';
-          const params = [name, category, price, quantity, description || ''];
-          
-          db.run(sql, params, function(err) {
-            if (err) {
-              res.status(500).json({ error: err.message });
-              return;
-            }
-            res.json({ 
-              id: this.lastID,
-              message: 'Product added successfully'
-            });
-          });
-        });
-
-        app.put('/api/products/:id', (req, res) => {
-          const id = req.params.id;
-          const { name, category, price, quantity, description } = req.body;
-          
-          if (!name || !category || price === undefined || quantity === undefined) {
-            res.status(400).json({ error: 'Missing required fields' });
-            return;
-          }
-
-          const sql = 'UPDATE products SET name = ?, category = ?, price = ?, quantity = ?, description = ? WHERE id = ?';
-          const params = [name, category, price, quantity, description || '', id];
-          
-          db.run(sql, params, function(err) {
-            if (err) {
-              res.status(500).json({ error: err.message });
-              return;
-            }
-            if (this.changes === 0) {
-              res.status(404).json({ error: 'Product not found' });
-              return;
-            }
-            res.json({ message: 'Product updated successfully' });
-          });
-        });
-
-        app.delete('/api/products/:id', (req, res) => {
-          const id = req.params.id;
-          
-          db.run('DELETE FROM products WHERE id = ?', [id], function(err) {
-            if (err) {
-              res.status(500).json({ error: err.message });
-              return;
-            }
-            if (this.changes === 0) {
-              res.status(404).json({ error: 'Product not found' });
-              return;
-            }
-            res.json({ message: 'Product deleted successfully' });
-          });
-        });
+        
+        // Import and use the same route definitions as the main app
+        const setupRoutes = require('../routes');
+        setupRoutes(app, db);
 
         done();
       });
